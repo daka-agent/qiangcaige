@@ -21,7 +21,15 @@
 
 ## 在线访问
 
-👉 **[https://daka-agent.github.io/qiangcaige/](https://daka-agent.github.io/qiangcaige/)**
+| 平台 | 链接 |
+|------|------|
+| GitHub Pages | 👉 [https://daka-agent.github.io/qiangcaige/](https://daka-agent.github.io/qiangcaige/) |
+| AtomGit Pages | 👉 [https://dakazhang.atomgit.net/qiangcaige/](https://dakazhang.atomgit.net/qiangcaige/) |
+
+## 仓库镜像
+
+- **GitHub**：[daka-agent/qiangcaige](https://github.com/daka-agent/qiangcaige)
+- **AtomGit**：[dakazhang/qiangcaige](https://atomgit.com/dakazhang/qiangcaige)
 
 ## 本地运行
 
