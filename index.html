@@ -429,6 +429,7 @@ let audio = null;
 let isPlaying = false;
 let lyricLines = [];
 let audioReady = false;
+let audioLoaded = false;
 
 function initAudio(){
   if(audioReady) return;
@@ -439,10 +440,21 @@ function initAudio(){
     document.getElementById('timeTotal').textContent=formatTime(audio.duration||SONG_DURATION);
   });
   audio.addEventListener('canplaythrough',()=>{
-    audioReady=true;
+    audioLoaded=true;
+    const btn=document.getElementById('btnPlay');
+    btn.textContent=isPlaying?'⏸':'▶';
+    btn.style.opacity='1';
+  });
+  audio.addEventListener('waiting',()=>{
+    document.getElementById('btnPlay').textContent='⏳';
+  });
+  audio.addEventListener('playing',()=>{
+    document.getElementById('btnPlay').textContent='⏸';
   });
   audio.addEventListener('error',()=>{
     showToast('音频加载失败，请刷新重试');
+    const btn=document.getElementById('btnPlay');
+    btn.textContent='▶';btn.style.opacity='1';
   });
   lyricLines=Array.from(document.querySelectorAll('.lyric-line[data-time]'));
   audioReady=true;
@@ -551,9 +563,16 @@ function audioBufferToWav(buf){
 async function loadAudio(){
   initAudio();
   if(AUDIO_MODE==='suno'){
-    audio.src='song.mp3?'+Date.now();
+    // 不加时间戳，让浏览器缓存 MP3（第二次访问秒开）
+    audio.src='song.mp3';
     audio.preload='auto';
     audio.load();
+    // 显示加载中状态
+    if(!audioLoaded){
+      const btn=document.getElementById('btnPlay');
+      btn.textContent='⏳';
+      btn.style.opacity='0.6';
+    }
   }else{
     document.getElementById('btnPlay').textContent='⏳';
     document.getElementById('btnPlay').style.pointerEvents='none';
@@ -588,8 +607,12 @@ function togglePlay(){
   }
   if(isPlaying){audio.pause();isPlaying=false;}
   else{
+    // 音频还在加载中，提示用户
+    if(!audioLoaded && audio.readyState<3){
+      showToast('🎵 歌曲加载中，请稍等…');
+    }
     audio.play().then(()=>{isPlaying=true;}).catch(e=>{
-      showToast('播放失败');
+      showToast('播放失败，请再点一次');
       console.error(e);
     });
   }
